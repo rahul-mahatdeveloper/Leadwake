@@ -618,14 +618,3 @@ Phase 2 adds: watchlist, refresh, slider/boost, scheduler + gate, canary, WATCH 
 
 The data model above is complete from day one, so Phase 2 adds code and needs no schema rewrite.
 
----
-
-## 14. Open questions
-
-- Q1 Rahul's own ICP for testing (titles, geos, size).
-- Q2 Name: keep "Pravaah"?
-- Q3 Optional watchlist step in onboarding? (Watchlist is Phase 2, so this can wait.)
-- Q4 "Run now" for Members too? (Spec currently allows it.)
-- Q5 **D18: Trigger.dev, or Supabase-only?**
-- Q6 **D22: OK with watchlist moving to Phase 2?**
-- Q7 (v2 pricing) Should cache hits cost user credits? In v1 they cost 0.
