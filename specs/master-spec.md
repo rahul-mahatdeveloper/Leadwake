@@ -1,6 +1,6 @@
-# Pravaah v1 — Master Spec
+# Leadwake v1 — Master Spec
 
-> Working name: **Pravaah**.
+> Working name: **Leadwake**.
 > Status: **DRAFT v0.3**, under discussion with Rahul, not approved for coding yet.
 > Owner: Rahul · Last updated: 2026-10-23
 > Companion: `00b-risk-register.md` (45 risks, R1–R45; referenced as "(R#)" below).
@@ -63,7 +63,7 @@ Traxy-style tools fail because:
 - they never treat the post author as a lead
 - their watchlist leads are unscored
 
-**Pravaah v1:**
+**Leadwake v1:**
 - finds relevant posts from short keywords and watched profiles
 - keeps authors and engagers who fit the ICP *and* left a meaningful signal
 - shows each lead with an evidence-backed "why relevant"
@@ -111,7 +111,7 @@ Auth + workspaces · onboarding (ICP + Brief) · keyword discovery · watchlist 
 
 | Term | Meaning |
 |------|---------|
-| Workspace | One company using Pravaah |
+| Workspace | One company using Leadwake |
 | ICP / Brief | Who the buyer is / what intent looks like. Versioned per workspace |
 | Pool | Shared public facts: posts, comments, reactions, people, companies, id aliases |
 | Workspace post state | `NEW / DEFERRED / JUDGED`. Per workspace, per post (R15) |

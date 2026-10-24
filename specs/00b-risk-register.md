@@ -1,4 +1,4 @@
-# Pravaah — Risk Register (review of master spec v0.2)
+# Leadwake — Risk Register (review of master spec v0.2)
 
 > Date: 2026-10-23 · Reviewer: Claude · Status: fixes are folded into `00-master-spec.md` v0.3
 > Method: re-read v0.2 + spec 01 line by line, and checked the real Apify actor docs (input schemas + prices) for `harvestapi/linkedin-post-search`, `linkedin-post-comments`, `linkedin-post-reactions` and `linkedin-profile-scraper`.
