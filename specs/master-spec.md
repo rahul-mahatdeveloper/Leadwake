@@ -1,6 +1,6 @@
 # Leadwake — Master Spec
 
-> **Status:** DRAFT v1.1, for Rahul's review. Not approved for coding yet.
+> **Status:** APPROVED v1.1 (Rahul, 27 Oct 2026).
 > **Owner:** Rahul · **Last updated:** 2026-10-27
 > **Companions:** `CLAUDE.md` (how to work in this repo) · `docs/technical-design.md` (the **how**, written after this is approved) · `specs/NN-*.md` (one spec per feature).
 
@@ -48,9 +48,10 @@ LinkedIn is where B2B buyers talk about problems in public. Cheap, fast "typed d
 **Phase 1 go / no-go** (decided 27 Oct 2026; numbers are defaults): within 14 days at the test budget, on Rahul's own workspace. Only Qualified and Priority leads count; Nurture is excluded.
 - ≥ 50 rated leads, **and**
 - ≥ 60% of them get 👍, **and**
-- a second founder blind-rates 20 of them (without seeing Rahul's ratings), **and**
-- reply rate is measured on 10 real outreach messages, sent manually (Leadwake never sends), **and**
+- a second founder blind-rates 20 of them (without seeing Rahul's ratings) and also gives ≥ 60% 👍, **and**
 - internal cost per Qualified-or-better lead ≤ ₹50.
+
+Also measured, with no pass/fail in P1: reply rate on 10 real outreach messages, sent manually (Leadwake never sends).
 
 If Phase 1 fails, fix sources, gates or scoring before building Phase 2. Never automate a pipeline that produces bad leads.
 
@@ -280,7 +281,7 @@ Leadwake can't know who engaged without paying, so it predicts in cheap layers a
 
 ### 11.2 Warmth, 0–100 (FR-WM) [P1, per workspace]
 - **FR-WM1** Warmth is computed in **code** from the person's whole engagement history in the pool, not from one post.
-- **FR-WM2** Inputs (defaults): each relevant comment 30 × intent factor, each relevant reaction 5 [P2], each repost 15; repeated engagement across different posts or authors +10 per extra post; recency decay with a 14-day half-life; cap 100.
+- **FR-WM2** Inputs (defaults): each relevant comment 30 × intent factor, each relevant reaction 5 [P2], each repost 15, an author's own relevant post 40 (one strong engagement, FR-AU1; tune in the dry run); repeated engagement across different posts or authors +10 per extra post; recency decay with a 14-day half-life; cap 100.
 - **FR-WM3** Intent factor comes from the **comment quality class**, a pool judgement (Decider choice on the comment text, asked once per comment): just praise (0.3) / shares an opinion (0.6) / describes own experience or problem (1.0) / asks for a solution, price or recommendation (1.5).
 - **FR-WM4** Comments on irrelevant posts don't count.
 
@@ -359,8 +360,8 @@ All amounts here are real vendor cost in ₹, never customer lead credits (§14.
 - **FR-CRD2** Caps: per run, per month, per workspace, plus a global monthly cap. Reaching a cap stops new spend immediately; in-flight calls settle.
 - **FR-CRD3** Every charge is in the internal **cost ledger**: run, step, vendor, item, estimated cost, real cost.
 - **FR-CRD4** Kill switch (admin): stops all spend everywhere at once.
-- **FR-CRD5** [P1] **Minimal spend guard**, built in spec 00 before any paid call (including onboarding and the dry run): per-call hard limit, daily limit, kill switch, cost ledger. Full reserve/settle (FR-CRD1–3) comes in spec 04.
-- **FR-CRD6** [P1] **Cost to serve:** data is bought once into the pool. Each pooled item's cost is shared across the workspaces that used it, giving each workspace's cost to serve.
+- **FR-CRD5** [P1] **Minimal spend guard**, built in spec 00 before any paid call (including onboarding and the dry run): per-call hard limit (₹20, default), daily limit (₹200, default), kill switch, cost ledger. Full reserve/settle (FR-CRD1–3) comes in spec 04.
+- **FR-CRD6** [P1] **Cost to serve:** data is bought once into the pool. Each pooled item's cost is split equally across the workspaces that used it, giving each workspace's cost to serve. Internal metric only; never shown to clients.
 
 ### 14.3 Run report (FR-RP) [P1]
 Per run: posts found / passed Gate 1 / harvested, comments bought, people passed Gate 2, lookups bought vs reused, leads per bucket, spend per step, cost per Qualified-or-better lead, top dropped reasons, yield per source.
@@ -376,7 +377,7 @@ Caps and kill switch · runs needing review · decision quality per question (ag
 ---
 
 ## 15. Privacy and legal (FR-PV)
-- **FR-PV1** [P1] Public pages: privacy policy and terms. The privacy policy lists a contact email for data requests. No public "remove my data" page in P1.
+- **FR-PV1** [P1] Public pages: privacy policy and terms. The privacy policy lists a contact email for data requests: mahatluckyrahul@gmail.com (placeholder until a domain email exists). No public "remove my data" page in P1.
 - **FR-PV2** [P1] Deletion requests arrive by email. The admin handles them in the admin console: delete the person from the pool and every workspace (hard delete, §5 rule 8), then add them to the **suppression list**. If requests are ever automated, rate-limit them.
 - **FR-PV3** Store only the fields this spec lists. Raw vendor payloads are kept 30 days (default), then hard-deleted.
 - **FR-PV4** Comply with India's DPDP Act and GDPR where leads or clients are in the EU. Lawyer review before the first external workspace.
@@ -405,7 +406,7 @@ Caps and kill switch · runs needing review · decision quality per question (ag
 
 ### 16.3 Approved Apify actors
 Only actors that state "No cookies or account required". All verified no-cookie on 27 Oct 2026:
-harvestapi/linkedin-post-search · linkedin-company-posts · linkedin-profile-posts · linkedin-post-comments · linkedin-post-reactions · linkedin-profile-scraper · linkedin-company · linkedin-job-search (used from P2, FR-HP4).
+harvestapi/linkedin-post-search · harvestapi/linkedin-company-posts · harvestapi/linkedin-profile-posts · harvestapi/linkedin-post-comments · harvestapi/linkedin-post-reactions · harvestapi/linkedin-profile-scraper · harvestapi/linkedin-company · harvestapi/linkedin-job-search (used from P2, FR-HP4).
 - Excluded: the Sales Navigator actor (needs cookies).
 - Any new actor must state "No cookies or account required" before use. Status is re-verified in the dry run (§22). Lawyer review stays required (vendor-side risk, FR-PV4).
 
@@ -543,8 +544,14 @@ harvestapi/linkedin-post-search · linkedin-company-posts · linkedin-profile-po
 | Q7 | Exposure cap 3 workspaces / 7 days? | **Decided 27 Oct 2026:** keep; revisit once there are 20+ workspaces |
 | Q8 | Pricing: price per plan and lead credits per month (credit model decided, §14.5) | Decide before the first paying client [P2] |
 | Q9 | Lawyer review timing | Before the first external workspace |
-| Q10 | How is a pooled item's cost split across the workspaces that used it (FR-CRD6)? | Equal split among workspaces that used it in the same month |
-| Q11 | Pass bar for the second founder's blind rating (20 leads) and the reply rate (10 messages), or measure only? | Blind rating ≥ 60% 👍 like Rahul's; reply rate measure-only in P1 |
-| Q12 | How much warmth does an author's own relevant post add (FR-AU)? | Same as a comment classed "describes own experience" (30 × 1.0) |
-| Q13 | Spend-guard values (FR-CRD5): per-call hard limit and daily limit | Daily = per-run cap (₹300), since P1 runs once a day; per-call limit from dry-run prices |
-| Q14 | Contact email for data requests (FR-PV1) | A dedicated privacy alias, not a personal inbox |
+
+---
+
+## 24. Decisions log
+| # | Question | Decision (27 Oct 2026) |
+|---|---|---|
+| Q10 | How is a pooled item's cost split across workspaces (FR-CRD6)? | Equally across the workspaces that used it. Internal metric only |
+| Q11 | Pass bar for the second founder's blind rating and the reply rate (§2)? | Second founder's 👍 rate must also be ≥ 60%. Reply rate is measured only, no pass/fail in P1 |
+| Q12 | Warmth from an author's own post (FR-AU)? | One strong engagement worth 40 warmth points (default, tune in the dry run) |
+| Q13 | Spend-guard defaults (FR-CRD5)? | ₹20 per call, ₹200 per day |
+| Q14 | Contact email for data requests (FR-PV1)? | mahatluckyrahul@gmail.com, placeholder until a domain email exists |
