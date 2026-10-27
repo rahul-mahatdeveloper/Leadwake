@@ -1,6 +1,6 @@
 # Leadwake — Master Spec
 
-> **Status:** APPROVED v1.1 (Rahul, 27 Oct 2026).
+> **Status:** APPROVED v1.2 (Rahul, 27 Oct 2026).
 > **Owner:** Rahul · **Last updated:** 2026-10-27
 > **Companions:** `CLAUDE.md` (how to work in this repo) · `docs/technical-design.md` (the **how**, written after this is approved) · `specs/NN-*.md` (one spec per feature).
 
@@ -111,7 +111,7 @@ Phase 3 [P3]: contact lookup (email / phone), CRM and webhook delivery, payments
 ## 5. Fixed rules (business constraints)
 1. **No meetings / calendar feature.** Ever.
 2. **LinkedIn data only through Apify**, one account, behind an adapter, using only actors that state "No cookies or account required" (§16.3). Never give an actor LinkedIn cookies or an account. If an actor starts requiring them, stop using it.
-3. **Every paid call is capped.** Caps apply to real vendor spend (Apify, Jev, Claude) in ₹, recorded in the internal cost ledger. Test-mode monthly cap: **₹4,000** (default). Per-run cap: **₹300** (default). A minimal spend guard exists before the first paid call (FR-CRD5). Customer lead credits are separate (§14.5).
+3. **Every paid call is capped.** Caps apply to real vendor spend (Apify, Jev, Claude) in ₹, recorded in the internal cost ledger. Test-mode monthly cap: **₹4,000** (default; resets at IST midnight on the 1st of each month). Per-run cap: **₹200** (default). A minimal spend guard exists before the first paid call (FR-CRD5). Customer lead credits are separate (§14.5).
 4. **No workflow tools.** All logic is the product's own code.
 5. **Manual first.** Runs are manual until go/no-go passes.
 6. **Judgements go to the Decider:** Jev, behind a swappable interface. Claude Haiku is the borderline re-check and the fallback. **Sentences go to the writer:** Claude (ICP/Brief drafts, reason lines, openers).
@@ -179,7 +179,7 @@ Work is split into two layers:
 - **FR-ON2** Leadwake reads the website and the writer drafts the **ICP** and the **Signal Brief**: value proposition, up to 8 pains, up to 8 triggers, up to 12 topics, competitors, up to 8 rules (each HIGH or MEDIUM).
 - **FR-ON3** The owner reviews and edits every field, then approves. Nothing runs before approval.
 - **FR-ON4** **ICP check (optional, recommended):** the owner names up to 5 real customers and up to 5 bad fits (company or person LinkedIn URLs). The Decider scores each against the draft ICP. If a good customer scores low or a bad fit scores high, the wizard shows which ICP field caused it and asks the owner to adjust.
-- **FR-ON5** **Similar companies:** Leadwake lists companies with an overlapping ICP, using only the website, public search and the Brief. The Decider labels each **competitor** (same job, same buyer), **complement** (same buyer, different job) or **unrelated**. The owner confirms. Competitors become sources (§9.2) and their staff are excluded from leads. Complements are shown as possible partners only.
+- **FR-ON5** **Similar companies (manual entry):** The owner types the names of companies with an overlapping ICP. Leadwake does not auto-discover them. The Decider labels each **competitor** (same job, same buyer), **complement** (same buyer, different job) or **unrelated**. The owner confirms. Competitors become sources (§9.2) and their staff are excluded from leads. Complements are shown as possible partners only.
 - **FR-ON6** Never use data from other Leadwake workspaces to build this list.
 - **FR-ON7** Each competitor may have its LinkedIn company page. If unknown, Leadwake proposes one and the owner must confirm it before it is used as a source.
 - **FR-ON8** ICP and Brief are **versioned**. Every edit after approval creates a new version and triggers a re-score of existing leads (FR-SC9).
@@ -391,7 +391,7 @@ Caps and kill switch · runs needing review · decision quality per question (ag
 ### 16.1 Inputs
 | From | What |
 |---|---|
-| Owner | Website, company name, optional description; edits to ICP, Brief, competitors, exclusions; optional good/bad customer examples; 👍/👎 and reasons; delivery settings [P2] |
+| Owner | Website, company name, optional description; edits to ICP, Brief, exclusions; **similar company names (manual entry, FR-ON5)**; optional good/bad customer examples; 👍/👎 and reasons; delivery settings [P2] |
 | Apify (LinkedIn) | Posts, comments, reactions [P2], profiles, company pages |
 | Website | Page text for onboarding |
 | Decider (Jev; Claude Haiku re-check + fallback) | Probabilities for each named answer |
@@ -406,7 +406,7 @@ Caps and kill switch · runs needing review · decision quality per question (ag
 
 ### 16.3 Approved Apify actors
 Only actors that state "No cookies or account required". All verified no-cookie on 27 Oct 2026:
-harvestapi/linkedin-post-search · harvestapi/linkedin-company-posts · harvestapi/linkedin-profile-posts · harvestapi/linkedin-post-comments · harvestapi/linkedin-post-reactions · harvestapi/linkedin-profile-scraper · harvestapi/linkedin-company · harvestapi/linkedin-job-search (used from P2, FR-HP4).
+harvestapi/website-content-crawler (onboarding: reads the client's website, FR-ON2) · harvestapi/linkedin-post-search · harvestapi/linkedin-company-posts · harvestapi/linkedin-profile-posts · harvestapi/linkedin-post-comments · harvestapi/linkedin-post-reactions · harvestapi/linkedin-profile-scraper · harvestapi/linkedin-company · harvestapi/linkedin-job-search (used from P2, FR-HP4).
 - Excluded: the Sales Navigator actor (needs cookies).
 - Any new actor must state "No cookies or account required" before use. Status is re-verified in the dry run (§22). Lawyer review stays required (vendor-side risk, FR-PV4).
 
@@ -555,3 +555,7 @@ harvestapi/linkedin-post-search · harvestapi/linkedin-company-posts · harvesta
 | Q12 | Warmth from an author's own post (FR-AU)? | One strong engagement worth 40 warmth points (default, tune in the dry run) |
 | Q13 | Spend-guard defaults (FR-CRD5)? | ₹20 per call, ₹200 per day |
 | Q14 | Contact email for data requests (FR-PV1)? | mahatluckyrahul@gmail.com, placeholder until a domain email exists |
+| Q15 | Per-run cap: ₹300 or ₹200? (v1.2) | ₹200 (default). Tighter cap for test-mode safety; revisit with real run costs |
+| Q16 | Monthly cap reset timing? (v1.2) | IST midnight on the 1st of each month |
+| Q17 | FR-ON5 auto-discover vs manual entry? (v1.2) | Manual: founder types company names. No auto-search in P1; avoids hallucinated competitors |
+| Q18 | Website-content-crawler actor for onboarding? (v1.2) | Added to §16.3: harvestapi/website-content-crawler, no cookies required, used in FR-ON2 |
