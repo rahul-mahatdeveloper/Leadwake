@@ -39,7 +39,7 @@ Rules:
 ## Fixed rules (business constraints, not up for debate)
 1. **No meetings or calendar feature. Ever.** No tables, stubs or placeholders for it.
 2. **LinkedIn data comes only through Apify**, one account, behind our own adapter. No other scrapers, no LinkedIn cookies, no fake accounts, no direct LinkedIn scraping.
-3. **Every paid call has a cap.** Apify, Jev and Claude calls go through the spend system and the internal cost ledger: reserve before the call, settle after, with a per-run cap and a monthly cap. Until reserve/settle exists (spec 04), the minimal spend guard applies (per-call limit, daily limit, kill switch). Never make an uncapped paid call. Cap values live in config, defined in the master spec.
+3. **Every paid call has a cap.** Apify, Jev and Claude calls go through the spend system and the internal cost ledger: reserve before the call, settle after, with a per-run cap (₹200 default) and a monthly limit (₹4,000 default; resets at IST midnight on the 1st). Until reserve/settle exists (spec 04), the minimal spend guard applies (per-call limit, daily limit, kill switch). Never make an uncapped paid call. Cap values live in config, defined in the master spec.
 4. **No workflow tools** (n8n, Zapier, etc.). All logic is our own code.
 5. **Manual runs first.** The scheduler is built only after the quality gate passes.
 6. **Built for 1 → 100,000 clients from day one.** People, companies, posts and engagements live once in a shared global pool. Each client's scores and decisions live in that client's own layer. Never copy pool data per client.
