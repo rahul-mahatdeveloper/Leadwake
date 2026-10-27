@@ -82,13 +82,13 @@ Rules:
 - Client-isolation tests must pass before any feature touching client data is merged.
 - A failing test is never deleted or skipped to make CI green. Fix the code or ask.
 
-## Tech (fill in after `docs/technical-design.md` is approved)
-- Stack: _TBD_
-- Install: _TBD_
-- Run dev: _TBD_
-- Test: _TBD_
-- Lint / typecheck: _TBD_
-- Folder map: _TBD_
+## Tech (planned; commands become real in spec 00. Detail: `docs/technical-design.md`)
+- Stack: TypeScript · Next.js (App Router) on Vercel · Supabase Postgres + Auth (RLS for isolation) · Drizzle migrations · Inngest (background jobs) · Zod · Tailwind + shadcn/ui · Vitest · GitHub Actions. Vendors: Apify (`apify-client`), Jev + Claude Haiku (Decider), Claude Sonnet (writer), Resend (alerts).
+- Install: `npm install`, then copy `.env.example` to `.env.local` (points at the **dev** Supabase project, never prod)
+- Run dev: `npm run dev`, plus `npx inngest-cli dev` in a second terminal
+- Test: `npm test` (unit, network blocked) · `npm run test:db` (DB + isolation, always rolled back)
+- Lint / typecheck: `npm run lint` · `npm run typecheck`
+- Folder map: `src/app` routes · `src/adapters/*` only place vendor SDKs are imported · `src/core` pure scoring/gates/CSV/money · `src/decider` questions + policy · `src/writer` · `src/spend` spend guard + ledger · `src/pipeline` Inngest steps · `src/db` schema/migrations/RLS · `src/config` env + versioned defaults · `tests/` unit, db, isolation, fixtures
 
 ## Words we use
 | Term | Meaning |
