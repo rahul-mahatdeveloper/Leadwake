@@ -1,0 +1,13 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Probe (spec 03a): nothing scraped and no secret is ever committed (FR-PB31)
+probe/out/
+probe/.env
+probe/input/posts.txt
+probe/input/suppression.txt
